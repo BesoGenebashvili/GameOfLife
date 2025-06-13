@@ -1,4 +1,7 @@
-﻿using Spectre.Console;
+﻿using GameOfLife;
+using Spectre.Console;
+
+ConsoleInteropService.Configure(ConsoleInteropServiceConfiguration.Default);
 
 var xs = GetBunnies();
 
