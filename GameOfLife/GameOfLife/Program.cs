@@ -1,6 +1,8 @@
-﻿var xs = GetBunnies();
+﻿using Spectre.Console;
 
-Draw(xs);
+var xs = GetBunnies();
+
+DrawWithCanvas(xs);
 
 await Task.Delay(100);
 
@@ -10,7 +12,7 @@ for (int i = 0; i < 100; i++)
 
     var nextGrid = ResolveNextGrid(xs);
 
-    Draw(nextGrid);
+    DrawWithCanvas(nextGrid);
     xs = nextGrid;
 
     await Task.Delay(100);
@@ -136,6 +138,30 @@ static void Draw(int[][] xs)
 
         Console.WriteLine();
     }
+}
+
+static void DrawWithCanvas(int[][] xs)
+{
+    var canvas = new Canvas(xs.Length, xs[0].Length);
+
+    for (int i = 0; i < xs.Length; i++)
+    {
+        for (int j = 0; j < xs[i].Length; j++)
+        {
+            var color = ResolveColor(xs[i][j]);
+
+            canvas.SetPixel(j, i, color);
+        }
+    }
+
+    AnsiConsole.Write(canvas);
+
+    static Color ResolveColor(int value) => value switch
+    {
+        0 => Color.White,
+        1 => Color.Black,
+        _ => throw new InvalidOperationException("Unexpected cell value")
+    };
 }
 
 // https://playgameoflife.com/lexicon/bunnies
