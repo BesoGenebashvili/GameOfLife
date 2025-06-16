@@ -3,9 +3,11 @@ using Spectre.Console;
 
 ConsoleInteropService.Configure(ConsoleInteropServiceConfiguration.Default);
 
-var xs = GetBunnies();
 
-DrawWithCanvas(xs);
+var patternName = PromptPattern();
+var pattern = Pattern.Resolve(patternName);
+
+DrawWithCanvas(pattern);
 
 await Task.Delay(100);
 
@@ -13,10 +15,10 @@ for (int i = 0; i < 100; i++)
 {
     Console.Clear();
 
-    var nextGrid = ResolveNextGrid(xs);
+    var nextGrid = ResolveNextGrid(pattern);
 
     DrawWithCanvas(nextGrid);
-    xs = nextGrid;
+    pattern = nextGrid;
 
     await Task.Delay(100);
 }
@@ -167,23 +169,47 @@ static void DrawWithCanvas(int[][] xs)
     };
 }
 
-// https://playgameoflife.com/lexicon/bunnies
-static int[][] GetBunnies() =>
-    [
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
-        [0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
-        [0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0],
-        [0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    ];
+
+Pattern.Name PromptPattern() =>
+    AnsiConsole.Prompt(
+        new SelectionPrompt<Pattern.Name>()
+            .Title("Select [green]Pattern[/]:")
+            .AddChoices(Enum.GetValues<Pattern.Name>()));
+
+public static class Pattern
+{
+    public enum Name : byte
+    {
+        Bunnies
+    }
+
+    public static int[][] Resolve(Name pattern) => pattern switch
+    {
+        Name.Bunnies => Bunnies,
+        _ => throw new NotSupportedException("Pattern not supported")
+    };
+
+    /// <summary>
+    /// This is a parent of rabbits and was found independently by Robert Wainwright and Andrew Trevorrow.
+    /// https://playgameoflife.com/lexicon/bunnies
+    /// </summary>
+    private static int[][] Bunnies =>
+        [
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
+            [0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0],
+            [0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        ];
+}
