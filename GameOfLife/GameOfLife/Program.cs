@@ -1,215 +1,174 @@
 ﻿using GameOfLife;
 using Spectre.Console;
+using Array = GameOfLife.Array;
 
-ConsoleInteropService.Configure(ConsoleInteropServiceConfiguration.Default);
+//ConsoleInteropService.Configure(ConsoleInteropServiceConfiguration.Default);
 
+await Game.Run();
 
-var patternName = PromptPattern();
-var pattern = Pattern.Resolve(patternName);
-
-DrawWithCanvas(pattern);
-
-await Task.Delay(100);
-
-for (int i = 0; i < 100; i++)
+public class Game
 {
-    Console.Clear();
-
-    var nextGrid = ResolveNextGrid(pattern);
-
-    DrawWithCanvas(nextGrid);
-    pattern = nextGrid;
-
-    await Task.Delay(100);
-}
-
-Console.ReadLine();
-
-static int[][] ResolveNextGrid(int[][] xs)
-{
-    const int DEAD = 0;
-    const int ALIVE = 1;
-
-    var ys = Create2DArray(xs.Length, xs[0].Length);
-
-    for (int i = 0; i < xs.Length; i++)
+    static Pattern.Name PromptPattern() =>
+        AnsiConsole.Prompt(
+            new SelectionPrompt<Pattern.Name>()
+                .Title("Select [green]Pattern[/]:")
+                .AddChoices(Enum.GetValues<Pattern.Name>()));
+    public static async Task Run()
     {
-        for (int j = 0; j < xs[i].Length; j++)
+        long Generation = 1; // Grid Height and Width
+
+        var patternName = PromptPattern();
+        var pattern = Pattern.Resolve(patternName);
+        Console.WriteLine(pattern.Length);
+        Console.WriteLine(pattern[0].Length);
+        var speed = 300;
+
+        DrawWithCanvas(pattern);
+
+        AnsiConsole.MarkupLine($"•Speed: [green]{speed}ms[/]");
+        AnsiConsole.MarkupLine($"•Pattern: [green]{patternName}[/]");
+        AnsiConsole.MarkupLine($"•Generation: [green]{Generation}[/]");
+
+        await Task.Delay(300);
+
+        for (int i = 0; i < 100; i++)
         {
-            var state = xs[i][j];
+            Console.Clear();
 
-            var neighbors = CountNeighbors(xs, i, j);
+            var nextGrid = ResolveNextGrid(pattern);
 
-            if (state is DEAD && neighbors is 0)
+            DrawWithCanvas(nextGrid);
+
+            AnsiConsole.MarkupLine($"•Speed: [green]{speed}ms[/]");
+            AnsiConsole.MarkupLine($"•Pattern: [green]{patternName}[/]");
+            AnsiConsole.MarkupLine($"•Generation: [green]{Generation}[/]");
+            Generation++;
+
+            pattern = nextGrid;
+            await Task.Delay(300);
+        }
+
+        Console.ReadLine();
+    }
+
+    private static int[][] ResolveNextGrid(int[][] xs)
+    {
+        const int DEAD = 0;
+        const int ALIVE = 1;
+
+        var ys = Array.Create2D(xs.Length, xs[0].Length);
+
+        for (int i = 0; i < xs.Length; i++)
+        {
+            for (int j = 0; j < xs[i].Length; j++)
             {
-                ys[i][j] = DEAD; // Stay dead
+                var state = xs[i][j];
+
+                var neighbors = CountNeighbors(xs, i, j);
+
+                if (state is DEAD && neighbors is 0)
+                {
+                    ys[i][j] = DEAD; // Stay dead
+                }
+                else if (state is ALIVE && neighbors <= 1)
+                {
+                    ys[i][j] = DEAD; // Solitude
+                }
+                else if (state is ALIVE && neighbors >= 4)
+                {
+                    ys[i][j] = DEAD; // Overpopulation
+                }
+                else if (state is DEAD && neighbors is 3)
+                {
+                    ys[i][j] = ALIVE; // Reproduction
+                }
+                else
+                {
+                    ys[i][j] = state; // Stay alive
+                }
             }
-            else if (state is ALIVE && neighbors <= 1)
+        }
+
+        return ys;
+    }
+
+    private static int CountNeighbors(int[][] xs, int row, int col)
+    {
+        int sum = 0;
+
+        for (int i = row - 1; i < row + 2; i++)
+        {
+            for (int j = col - 1; j < col + 2; j++)
             {
-                ys[i][j] = DEAD; // Solitude
+                // Skip the center cell
+                if (i == row && j == col)
+                    continue;
+
+                var r = (i + xs.Length) % xs.Length; // Wrap around rows
+                var c = (j + xs[0].Length) % xs[0].Length; // Wrap around columns
+
+                sum += xs[r][c];
             }
-            else if (state is ALIVE && neighbors >= 4)
+        }
+
+        return sum;
+
+        /*
+        sum += xs[i - 1][j - 1];
+        sum += xs[i - 1][j];
+        sum += xs[i - 1][j + 1];
+
+        sum += xs[i][j - 1];
+        sum += xs[i][j + 1];
+
+        sum += xs[i + 1][j - 1];
+        sum += xs[i + 1][j];
+        sum += xs[i + 1][j + 1];
+        */
+
+        /*
+        [-1][-1], [-1][0], [-1][1],
+        [0][-1], [0][0], [0][1],
+        [1][-1], [1][0], [1][1],
+         */
+    }
+
+    private static void Draw(int[][] xs)
+    {
+        for (int i = 0; i < xs.Length; i++)
+        {
+            for (int j = 0; j < xs[i].Length; j++)
             {
-                ys[i][j] = DEAD; // Overpopulation
+                Console.Write(xs[i][j] + " ");
             }
-            else if (state is DEAD && neighbors is 3)
-            {
-                ys[i][j] = ALIVE; // Reproduction
-            }
-            else
-            {
-                ys[i][j] = state; // Stay alive
-            }
+
+            Console.WriteLine();
         }
     }
 
-    return ys;
-}
-
-static int CountNeighbors(int[][] xs, int row, int col)
-{
-    int sum = 0;
-
-    for (int i = row - 1; i < row + 2; i++)
+    private static void DrawWithCanvas(int[][] xs)
     {
-        for (int j = col - 1; j < col + 2; j++)
+        var canvas = new Canvas(xs.Length, xs[0].Length);
+
+        for (int i = 0; i < xs.Length; i++)
         {
-            // Skip the center cell
-            if (i == row && j == col)
-                continue;
+            for (int j = 0; j < xs[i].Length; j++)
+            {
+                var color = ResolveColor(xs[i][j]);
 
-            var r = (i + xs.Length) % xs.Length; // Wrap around rows
-            var c = (j + xs[0].Length) % xs[0].Length; // Wrap around columns
-
-            sum += xs[r][c];
-        }
-    }
-
-    return sum;
-
-    /*
-    sum += xs[i - 1][j - 1];
-    sum += xs[i - 1][j];
-    sum += xs[i - 1][j + 1];
-
-    sum += xs[i][j - 1];
-    sum += xs[i][j + 1];
-
-    sum += xs[i + 1][j - 1];
-    sum += xs[i + 1][j];
-    sum += xs[i + 1][j + 1];
-    */
-
-    /*
-    [-1][-1], [-1][0], [-1][1],
-    [0][-1], [0][0], [0][1],
-    [1][-1], [1][0], [1][1],
-     */
-}
-
-static int[][] Create2DArray(int rows, int cols)
-{
-    int[][] xs = new int[rows][];
-
-    for (int i = 0; i < rows; i++)
-    {
-        xs[i] = new int[cols];
-    }
-
-    return xs;
-}
-
-static void FillArrayRandomly(int[][] xs)
-{
-    var random = new Random();
-
-    for (int i = 0; i < xs.Length; i++)
-    {
-        for (int j = 0; j < xs[i].Length; j++)
-        {
-            xs[i][j] = random.Next(0, 2);
-        }
-    }
-}
-
-static void Draw(int[][] xs)
-{
-    for (int i = 0; i < xs.Length; i++)
-    {
-        for (int j = 0; j < xs[i].Length; j++)
-        {
-            Console.Write(xs[i][j] + " ");
+                // j is the X coordinate (column)
+                // i is the Y coordinate (row)
+                canvas.SetPixel(j, i, color);
+            }
         }
 
-        Console.WriteLine();
-    }
-}
+        AnsiConsole.Write(canvas);
 
-static void DrawWithCanvas(int[][] xs)
-{
-    var canvas = new Canvas(xs.Length, xs[0].Length);
-
-    for (int i = 0; i < xs.Length; i++)
-    {
-        for (int j = 0; j < xs[i].Length; j++)
+        static Color ResolveColor(int value) => value switch
         {
-            var color = ResolveColor(xs[i][j]);
-
-            canvas.SetPixel(j, i, color);
-        }
+            0 => Color.White,
+            1 => Color.Black,
+            _ => throw new InvalidOperationException("Unexpected cell value")
+        };
     }
-
-    AnsiConsole.Write(canvas);
-
-    static Color ResolveColor(int value) => value switch
-    {
-        0 => Color.White,
-        1 => Color.Black,
-        _ => throw new InvalidOperationException("Unexpected cell value")
-    };
-}
-
-
-Pattern.Name PromptPattern() =>
-    AnsiConsole.Prompt(
-        new SelectionPrompt<Pattern.Name>()
-            .Title("Select [green]Pattern[/]:")
-            .AddChoices(Enum.GetValues<Pattern.Name>()));
-
-public static class Pattern
-{
-    public enum Name : byte
-    {
-        Bunnies
-    }
-
-    public static int[][] Resolve(Name pattern) => pattern switch
-    {
-        Name.Bunnies => Bunnies,
-        _ => throw new NotSupportedException("Pattern not supported")
-    };
-
-    /// <summary>
-    /// This is a parent of rabbits and was found independently by Robert Wainwright and Andrew Trevorrow.
-    /// https://playgameoflife.com/lexicon/bunnies
-    /// </summary>
-    private static int[][] Bunnies =>
-        [
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0],
-            [0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0],
-            [0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0],
-            [0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        ];
 }

@@ -27,6 +27,7 @@ public static unsafe partial class ConsoleInterop
 #pragma warning restore CA1401 // P/Invokes should not be visible
 }
 
+// TODO: add appsettings.json
 public sealed record ConsoleInteropServiceConfiguration(
     bool DisableWindowButtons,
     bool AdjustWindowSize,
@@ -66,8 +67,10 @@ public static class ConsoleInteropService
 
         static void AdjustWindowSize()
         {
+#pragma warning disable CA1416 // Validate platform compatibility
             Console.WindowHeight = Console.LargestWindowHeight / 2;
             Console.WindowWidth = Console.LargestWindowWidth / 2;
+#pragma warning restore CA1416 // Validate platform compatibility
         }
 
         static void RemoveScrollbar()
