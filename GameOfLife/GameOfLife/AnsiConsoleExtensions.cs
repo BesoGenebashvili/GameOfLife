@@ -4,13 +4,20 @@ namespace GameOfLife;
 
 public sealed class AnsiConsoleExtensions
 {
-    public static Pattern.Name PromptPattern() =>
-        AnsiConsole.Prompt(
-            new SelectionPrompt<Pattern.Name>()
-                .Title("Select [green]Pattern[/]:")
-                .AddChoices(Enum.GetValues<Pattern.Name>()));
+    public static void DrawDisplay(
+        int[][] pattern,
+        int speedInMs,
+        Pattern.Name patternName,
+        long generation)
+    {
+        DrawGenerationWithCanvas(pattern);
+        DrawProperties(
+            speedInMs,
+            patternName,
+            generation);
+    }
 
-    public static void MarkupLineProperties(
+    public static void DrawProperties(
         int speed,
         Pattern.Name patternName,
         long generation)
@@ -19,6 +26,13 @@ public sealed class AnsiConsoleExtensions
         AnsiConsole.MarkupLine($"• Pattern: [green]{patternName}[/]");
         AnsiConsole.MarkupLine($"• Generation: [green]{generation}[/]");
     }
+
+    public static Pattern.Name PromptPattern() =>
+        AnsiConsole.Prompt(
+            new SelectionPrompt<Pattern.Name>()
+                .Title("Select [green]Pattern[/]:")
+                .AddChoices(Enum.GetValues<Pattern.Name>()));
+
 
     public static void DrawGenerationWithCanvas(int[][] xs)
     {
