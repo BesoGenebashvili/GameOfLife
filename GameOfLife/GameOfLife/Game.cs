@@ -11,14 +11,14 @@ public static class Game
         var pattern = Pattern.Resolve(patternName);
 
         AnsiConsoleExtensions.DrawDisplay(
-            pattern, 
-            speedInMs, 
-            patternName, 
+            pattern,
+            speedInMs,
+            patternName,
             generation);
 
         await Task.Delay(speedInMs);
 
-        for (int i = 0; i < 100; i++)
+        while (true)
         {
             Console.Clear();
 
@@ -32,9 +32,13 @@ public static class Game
 
             pattern = nextGrid;
             await Task.Delay(speedInMs);
-        }
 
-        Console.ReadLine();
+            if (Console.KeyAvailable)
+            {
+                Console.ReadKey(true);
+                break;
+            }
+        }
     }
 
     private static int[][] ResolveNextGeneration(int[][] xs)

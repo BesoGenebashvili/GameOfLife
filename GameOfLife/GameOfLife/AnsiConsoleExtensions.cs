@@ -25,6 +25,7 @@ public sealed class AnsiConsoleExtensions
         AnsiConsole.MarkupLine($"• Speed: [green]{speed}ms[/]");
         AnsiConsole.MarkupLine($"• Pattern: [green]{patternName}[/]");
         AnsiConsole.MarkupLine($"• Generation: [green]{generation}[/]");
+        AnsiConsole.MarkupLine($"[gray]• Press any key to exit[/]");
     }
 
     public static Pattern.Name PromptPattern() =>
