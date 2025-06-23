@@ -2,9 +2,39 @@
 
 namespace GameOfLife;
 
+public enum MenuAction : byte
+{
+    StartGame,
+    Exit
+}
+
 public sealed class AnsiConsoleExtensions
 {
-    public static void DrawDisplay(
+    public static void DrawMenu()
+    {
+        AnsiConsole.Write(
+            new FigletText("Game of Life")
+                .Centered()
+                .Color(Color.Green));
+
+        AnsiConsole.MarkupLine(
+            "The Game of Life is not your typical computer game.\n" +
+            "It is a [yellow]cellular automaton[/], invented by mathematician [blue]John Conway[/].\n" +
+            "The game consists of a grid of cells that can be either [bold]alive (1)[/] or [bold]dead (0)[/].\n\n" +
+
+            "[underline]Rules:[/]\n\n" +
+
+            "[bold]For a live (populated) cell:[/]\n" +
+            "  - Fewer than 2 neighbors -> [red]dies[/] (as if by solitude)\n" +
+            "  - More than 3 neighbors -> [red]dies[/] (as if by overpopulation)\n" +
+            "  - 2 or 3 neighbors -> [green]survives[/]\n\n" +
+
+            "[bold]For a dead (empty) cell:[/]\n" +
+            "  - Exactly 3 neighbors -> [green]becomes alive[/] (reproduction)"
+        );
+    }
+
+    public static void DrawGame(
         int[][] pattern,
         int speedInMs,
         Pattern.Name patternName,
@@ -34,6 +64,31 @@ public sealed class AnsiConsoleExtensions
                 .Title("Select [green]Pattern[/]:")
                 .AddChoices(Enum.GetValues<Pattern.Name>()));
 
+    public static MenuAction PromptMenuAction()
+    {
+        var action = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                                .Title("Select [green]Action[/]:")
+                                .AddChoices(Enum.GetValues<MenuAction>()
+                                                .Select(Show)
+                                                .ToArray()));
+
+        return action switch
+        {
+            "Start Game" => MenuAction.StartGame,
+            "Exit" => MenuAction.Exit,
+            _ => throw NotSupported()
+        };
+
+        string Show(MenuAction action) => action switch
+        {
+            MenuAction.StartGame => "Start Game",
+            MenuAction.Exit => "Exit",
+            _ => throw NotSupported()
+        };
+
+        NotSupportedException NotSupported() => new("Menu action not supported");
+    }
 
     public static void DrawGenerationWithCanvas(int[][] xs)
     {

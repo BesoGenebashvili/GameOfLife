@@ -10,7 +10,7 @@ public static class Game
 
         var pattern = Pattern.Resolve(patternName);
 
-        AnsiConsoleExtensions.DrawDisplay(
+        AnsiConsoleExtensions.DrawGame(
             pattern,
             speedInMs,
             patternName,
@@ -24,7 +24,7 @@ public static class Game
 
             var nextGrid = ResolveNextGeneration(pattern);
 
-            AnsiConsoleExtensions.DrawDisplay(
+            AnsiConsoleExtensions.DrawGame(
                 pattern,
                 speedInMs,
                 patternName,
