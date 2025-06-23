@@ -24,13 +24,14 @@ public static class Game
 
             var nextGrid = ResolveNextGeneration(pattern);
 
+            pattern = nextGrid;
+
             AnsiConsoleExtensions.DrawGame(
                 pattern,
                 speedInMs,
                 patternName,
                 generation++);
 
-            pattern = nextGrid;
             await Task.Delay(speedInMs);
 
             if (Console.KeyAvailable)
@@ -82,7 +83,7 @@ public static class Game
     /// [0][-1],  [0][0],  [0][1],
     /// [1][-1],  [1][0],  [1][1],
     /// </summary>
-    private static int CountNeighbors(int[][] xs, int row, int col)
+    private static int CountNeighbors2(int[][] xs, int row, int col)
     {
         int sum = 0;
 
@@ -98,6 +99,29 @@ public static class Game
                 var c = (j + xs[0].Length) % xs[0].Length; // Wrap around columns
 
                 sum += xs[r][c];
+            }
+        }
+
+        return sum;
+    }
+
+    private static int CountNeighbors(int[][] xs, int row, int col)
+    {
+        int sum = 0;
+        int rows = xs.Length;
+        int cols = xs[0].Length;
+
+        for (int i = row - 1; i <= row + 1; i++)
+        {
+            for (int j = col - 1; j <= col + 1; j++)
+            {
+                // Skip the center cell
+                if (i == row && j == col)
+                    continue;
+
+                // Only count neighbors within bounds
+                if (i >= 0 && i < rows && j >= 0 && j < cols)
+                    sum += xs[i][j];
             }
         }
 

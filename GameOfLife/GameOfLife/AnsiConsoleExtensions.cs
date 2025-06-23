@@ -68,7 +68,7 @@ public sealed class AnsiConsoleExtensions
     {
         var action = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
-                                .Title("Select [green]Action[/]:")
+                                .Title(string.Empty)
                                 .AddChoices(Enum.GetValues<MenuAction>()
                                                 .Select(Show)
                                                 .ToArray()));
@@ -114,5 +114,20 @@ public sealed class AnsiConsoleExtensions
             1 => Color.Black,
             _ => throw new InvalidOperationException("Unexpected cell value")
         };
+    }
+
+    /// <summary>
+    /// Just for testing purposes
+    /// </summary>
+    public static void DrawGenerationWithoutCanvas(int[][] xs)
+    {
+        for (int i = 0; i < xs.Length; i++)
+        {
+            for (int j = 0; j < xs[i].Length; j++)
+            {
+                Console.Write(xs[i][j] is 1 ? "0" : " ");
+            }
+            Console.WriteLine();
+        }
     }
 }

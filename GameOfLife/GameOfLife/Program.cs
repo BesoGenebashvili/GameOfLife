@@ -17,7 +17,6 @@ if (menuAction is MenuAction.StartGame)
 {
     AnsiConsole.Clear();
 
-    // before game add image canvas
     var patternName = AnsiConsoleExtensions.PromptPattern();
 
     var speedInMs = 200;
