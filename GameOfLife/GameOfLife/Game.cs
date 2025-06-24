@@ -1,22 +1,27 @@
 ﻿namespace GameOfLife;
 
+public sealed record GameConfiguration(
+    int SpeedInMs,
+    Pattern.Name PatternName)
+{
+    public static GameConfiguration Default { get; } = new(200, Pattern.Name.Random);
+};
+
 public static class Game
 {
-    public static async Task Play(
-        int speedInMs,
-        Pattern.Name patternName)
+    public static async Task Play(GameConfiguration GameConfiguration)
     {
         var generation = 1;
 
-        var pattern = Pattern.Resolve(patternName);
+        var pattern = Pattern.Resolve(GameConfiguration.PatternName);
 
         AnsiConsoleExtensions.DrawGame(
             pattern,
-            speedInMs,
-            patternName,
+            GameConfiguration.SpeedInMs,
+            GameConfiguration.PatternName,
             generation);
 
-        await Task.Delay(speedInMs);
+        await Task.Delay(GameConfiguration.SpeedInMs);
 
         while (true)
         {
@@ -28,11 +33,11 @@ public static class Game
 
             AnsiConsoleExtensions.DrawGame(
                 pattern,
-                speedInMs,
-                patternName,
+                GameConfiguration.SpeedInMs,
+                GameConfiguration.PatternName,
                 generation++);
 
-            await Task.Delay(speedInMs);
+            await Task.Delay(GameConfiguration.SpeedInMs);
 
             if (Console.KeyAvailable)
             {

@@ -4,22 +4,41 @@ using AnsiConsoleExtensions = GameOfLife.AnsiConsoleExtensions;
 
 ConsoleInteropService.Configure(ConsoleInteropServiceConfiguration.Default);
 
-AnsiConsoleExtensions.DrawMenu();
+var defaultConfiguration = GameConfiguration.Default;
 
-var menuAction = AnsiConsoleExtensions.PromptMenuAction();
+await Run(defaultConfiguration);
 
-if (menuAction is MenuAction.Exit)
+static async Task Run(GameConfiguration gameConfiguration)
 {
-    return;
-}
+    AnsiConsoleExtensions.DrawMenu();
 
-if (menuAction is MenuAction.StartGame)
-{
-    AnsiConsole.Clear();
+    var menuAction = AnsiConsoleExtensions.PromptMenuAction();
 
-    var patternName = AnsiConsoleExtensions.PromptPattern();
+    if (menuAction is MenuAction.Exit)
+    {
+        return;
+    }
 
-    var speedInMs = 200;
+    if (menuAction is MenuAction.Settings)
+    {
+        Console.WriteLine();
+        var speedInMs = AnsiConsoleExtensions.PromptSpeedInMs(gameConfiguration.SpeedInMs);
+        AnsiConsole.MarkupLine($"[green]Speed set speed to {speedInMs}ms[/]");
+        AnsiConsole.MarkupLine("[gray]Press any key to return to the menu[/]");
 
-    await Game.Play(speedInMs, patternName);
+        Console.ReadKey(true);
+        AnsiConsole.Clear();
+        await Run(gameConfiguration with { SpeedInMs = speedInMs });
+    }
+
+    if (menuAction is MenuAction.StartGame)
+    {
+        AnsiConsole.Clear();
+
+        var patternName = AnsiConsoleExtensions.PromptPattern();
+
+        gameConfiguration = gameConfiguration with { PatternName = patternName };
+
+        await Game.Play(gameConfiguration);
+    }
 }

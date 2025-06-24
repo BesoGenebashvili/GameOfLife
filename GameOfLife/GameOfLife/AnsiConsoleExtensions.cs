@@ -5,6 +5,7 @@ namespace GameOfLife;
 public enum MenuAction : byte
 {
     StartGame,
+    Settings,
     Exit
 }
 
@@ -76,6 +77,7 @@ public sealed class AnsiConsoleExtensions
         return action switch
         {
             "Start Game" => MenuAction.StartGame,
+            "Settings" => MenuAction.Settings,
             "Exit" => MenuAction.Exit,
             _ => throw NotSupported()
         };
@@ -83,6 +85,7 @@ public sealed class AnsiConsoleExtensions
         string Show(MenuAction action) => action switch
         {
             MenuAction.StartGame => "Start Game",
+            MenuAction.Settings => "Settings",
             MenuAction.Exit => "Exit",
             _ => throw NotSupported()
         };
@@ -90,6 +93,21 @@ public sealed class AnsiConsoleExtensions
         NotSupportedException NotSupported() => new("Menu action not supported");
     }
 
+    public static int PromptSpeedInMs(int defaultValue)
+    {
+        AnsiConsole.MarkupLine($"[gray]Minimum value is 50ms[/]");
+        AnsiConsole.MarkupLine($"[gray]Maximum value is 400ms[/]");
+        AnsiConsole.MarkupLine($"[gray]Default value is {defaultValue}ms[/]");
+
+        return AnsiConsole.Prompt(
+                new TextPrompt<int>($"\nEnter speed in ms:")
+                        .Validate((n) => n switch
+                        {
+                            < 50 => ValidationResult.Error("[red]Too slow[/]"),
+                            > 400 => ValidationResult.Error("[red]Too fast[/]"),
+                            _ => ValidationResult.Success(),
+                        }));
+    }
     public static void DrawGenerationWithCanvas(int[][] xs)
     {
         var canvas = new Canvas(xs.Length, xs[0].Length);
