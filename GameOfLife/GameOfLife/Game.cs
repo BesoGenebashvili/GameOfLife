@@ -2,9 +2,10 @@
 
 public sealed record GameConfiguration(
     int SpeedInMs,
+    int GridSize,
     Pattern.Name PatternName)
 {
-    public static GameConfiguration Default { get; } = new(200, Pattern.Name.Random);
+    public static GameConfiguration Default { get; } = new(200, 32, Pattern.Name.Random);
 };
 
 public static class Game

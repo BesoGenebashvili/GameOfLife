@@ -35,7 +35,7 @@ public sealed record ConsoleInteropServiceConfiguration(
     bool SetEncoding)
 {
     public static ConsoleInteropServiceConfiguration Default =>
-        new(true, true, true, true);
+        new(false, true, true, true);
 }
 
 public static class ConsoleInteropService

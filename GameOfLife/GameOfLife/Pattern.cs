@@ -2,8 +2,8 @@
 
 public static class Pattern
 {
-    private const int FixedWidth = 26;
-    private const int FixedHeight = 26;
+    private const int FixedWidth = 64;
+    private const int FixedHeight = 64;
 
     public enum Name : byte
     {
