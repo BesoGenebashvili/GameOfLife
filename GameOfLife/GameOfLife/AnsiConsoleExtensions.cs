@@ -9,6 +9,12 @@ public enum MenuAction : byte
     Exit
 }
 
+public enum SettingsAction : byte
+{
+    SetGameSpeed,
+    SetGridSize
+}
+
 public sealed class AnsiConsoleExtensions
 {
     public static void DrawMenu()
@@ -69,45 +75,76 @@ public sealed class AnsiConsoleExtensions
     {
         var action = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
-                                .Title(string.Empty)
+                                .Title("\n    [green]MENU[/]")
                                 .AddChoices(Enum.GetValues<MenuAction>()
                                                 .Select(Show)
                                                 .ToArray()));
 
-        return action switch
-        {
-            "Start Game" => MenuAction.StartGame,
-            "Settings" => MenuAction.Settings,
-            "Exit" => MenuAction.Exit,
-            _ => throw NotSupported()
-        };
+        return Read(action);
 
-        string Show(MenuAction action) => action switch
+        static string Show(MenuAction value) => value switch
         {
             MenuAction.StartGame => "Start Game",
             MenuAction.Settings => "Settings",
             MenuAction.Exit => "Exit",
-            _ => throw NotSupported()
+            _ => throw NotImplemented()
         };
 
-        NotSupportedException NotSupported() => new("Menu action not supported");
+        static MenuAction Read(string value) => value switch
+        {
+            "Start Game" => MenuAction.StartGame,
+            "Settings" => MenuAction.Settings,
+            "Exit" => MenuAction.Exit,
+            _ => throw NotImplemented()
+        };
+
+        static NotImplementedException NotImplemented() => new("Menu action is not implemented");
     }
 
     public static int PromptSpeedInMs(int defaultValue)
     {
         AnsiConsole.MarkupLine($"[gray]Minimum value is 50ms[/]");
-        AnsiConsole.MarkupLine($"[gray]Maximum value is 400ms[/]");
+        AnsiConsole.MarkupLine($"[gray]Maximum value is 500ms[/]");
         AnsiConsole.MarkupLine($"[gray]Default value is {defaultValue}ms[/]");
 
         return AnsiConsole.Prompt(
                 new TextPrompt<int>($"\nEnter speed in ms:")
                         .Validate((n) => n switch
                         {
-                            < 50 => ValidationResult.Error("[red]Too slow[/]"),
-                            > 400 => ValidationResult.Error("[red]Too fast[/]"),
+                            < 50 => ValidationResult.Error("[red]Too fast[/]"),
+                            > 500 => ValidationResult.Error("[red]Too slow[/]"),
                             _ => ValidationResult.Success(),
                         }));
     }
+
+    public static SettingsAction PromptSettingsAction()
+    {
+        var action = AnsiConsole.Prompt(
+                        new SelectionPrompt<string>()
+                            .Title("\n    [green]SETTINGS[/]")
+                            .AddChoices(Enum.GetValues<SettingsAction>()
+                                            .Select(Show)
+                                            .ToArray()));
+
+        return Read(action);
+
+        static string Show(SettingsAction value) => value switch
+        {
+            SettingsAction.SetGameSpeed => "Set Game Speed",
+            SettingsAction.SetGridSize => "Set Grid Size",
+            _ => throw NotImplemented()
+        };
+
+        static SettingsAction Read(string value) => value switch
+        {
+            "Set Game Speed" => SettingsAction.SetGameSpeed,
+            "Set Grid Size" => SettingsAction.SetGridSize,
+            _ => throw NotImplemented()
+        };
+
+        static NotImplementedException NotImplemented() => new("Settings action is not implemented");
+    }
+
     public static void DrawGenerationWithCanvas(int[][] xs)
     {
         var canvas = new Canvas(xs.Length, xs[0].Length);

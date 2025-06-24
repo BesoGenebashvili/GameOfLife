@@ -21,6 +21,11 @@ static async Task Run(GameConfiguration gameConfiguration)
 
     if (menuAction is MenuAction.Settings)
     {
+        var settingsAction = AnsiConsoleExtensions.PromptSettingsAction();
+
+        // TODO: Implement
+
+
         Console.WriteLine();
         var speedInMs = AnsiConsoleExtensions.PromptSpeedInMs(gameConfiguration.SpeedInMs);
         AnsiConsole.MarkupLine($"[green]Speed set speed to {speedInMs}ms[/]");
