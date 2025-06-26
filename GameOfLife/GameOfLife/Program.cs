@@ -8,7 +8,7 @@ var defaultConfiguration = GameConfiguration.Default;
 
 await Run(defaultConfiguration);
 
-static async Task Run(GameConfiguration gameConfiguration)
+static async Task Run(GameConfiguration configuration)
 {
     AnsiConsoleExtensions.DrawMenu();
 
@@ -17,11 +17,11 @@ static async Task Run(GameConfiguration gameConfiguration)
     switch (menuAction)
     {
         case MenuAction.StartGame:
-            await StartGame(gameConfiguration);
+            await StartGame(configuration);
             break;
 
         case MenuAction.Settings:
-            await Settings(gameConfiguration);
+            await Settings(configuration);
             break;
 
         case MenuAction.Exit:
@@ -31,19 +31,19 @@ static async Task Run(GameConfiguration gameConfiguration)
             throw new NotImplementedException(nameof(menuAction));
     }
 
-    static async Task StartGame(GameConfiguration gameConfiguration)
+    static async Task StartGame(GameConfiguration configuration)
     {
         AnsiConsole.Clear();
 
         var patternName = AnsiConsoleExtensions.PromptPattern();
 
         // Move to settings?
-        gameConfiguration = gameConfiguration with { PatternName = patternName };
+        configuration = configuration with { PatternName = patternName };
 
-        await Game.Play(gameConfiguration);
+        await Game.Play(configuration);
     }
 
-    static async Task Settings(GameConfiguration gameConfiguration)
+    static async Task Settings(GameConfiguration configuration)
     {
         var settingsAction = AnsiConsoleExtensions.PromptSettingsAction();
 
@@ -53,25 +53,25 @@ static async Task Run(GameConfiguration gameConfiguration)
         {
             case SettingsAction.SetGameSpeed:
 
-                var speedInMs = AnsiConsoleExtensions.PromptSpeedInMs(gameConfiguration.SpeedInMs);
+                var speedInMs = AnsiConsoleExtensions.PromptSpeedInMs(configuration.SpeedInMs);
 
                 AnsiConsole.MarkupLine($"[green]Game speed set to {speedInMs}ms[/]");
                 AnsiConsole.MarkupLine("[gray]Press any key to return to the menu...[/]");
 
                 Console.ReadKey(true);
                 AnsiConsole.Clear();
-                await Run(gameConfiguration with { SpeedInMs = speedInMs });
+                await Run(configuration with { SpeedInMs = speedInMs });
 
                 break;
 
             case SettingsAction.SetGridSize:
 
-                var gridSize = AnsiConsoleExtensions.PromptGridSize(gameConfiguration.GridSize);
+                var gridSize = AnsiConsoleExtensions.PromptGridSize(configuration.GridSize);
                 AnsiConsole.MarkupLine($"[green]Game grid size set to {gridSize}X{gridSize}[/]");
                 AnsiConsole.MarkupLine("[gray]Press any key to return to the menu...[/]");
                 Console.ReadKey(true);
                 AnsiConsole.Clear();
-                await Run(gameConfiguration with { GridSize = gridSize });
+                await Run(configuration with { GridSize = gridSize });
                 break;
 
             default:

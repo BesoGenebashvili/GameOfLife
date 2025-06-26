@@ -14,12 +14,11 @@ public static class Game
     {
         var generation = 1;
 
-        var pattern = Pattern.Resolve(GameConfiguration.PatternName);
+        var pattern = Pattern.Resolve(GameConfiguration.GridSize, GameConfiguration.PatternName);
 
         AnsiConsoleExtensions.DrawGame(
             pattern,
-            GameConfiguration.SpeedInMs,
-            GameConfiguration.PatternName,
+            GameConfiguration,
             generation);
 
         await Task.Delay(GameConfiguration.SpeedInMs);
@@ -34,8 +33,7 @@ public static class Game
 
             AnsiConsoleExtensions.DrawGame(
                 pattern,
-                GameConfiguration.SpeedInMs,
-                GameConfiguration.PatternName,
+                GameConfiguration,
                 generation++);
 
             await Task.Delay(GameConfiguration.SpeedInMs);
@@ -83,34 +81,6 @@ public static class Game
         }
     }
 
-    /// <summary>
-    /// Neighbors are the cells surrounding the current cell ([0, 0]):
-    /// [-1][-1], [-1][0], [-1][1],
-    /// [0][-1],  [0][0],  [0][1],
-    /// [1][-1],  [1][0],  [1][1],
-    /// </summary>
-    private static int CountNeighbors2(int[][] xs, int row, int col)
-    {
-        int sum = 0;
-
-        for (int i = row - 1; i < row + 2; i++)
-        {
-            for (int j = col - 1; j < col + 2; j++)
-            {
-                // Skip the center cell
-                if (i == row && j == col)
-                    continue;
-
-                var r = (i + xs.Length) % xs.Length; // Wrap around rows
-                var c = (j + xs[0].Length) % xs[0].Length; // Wrap around columns
-
-                sum += xs[r][c];
-            }
-        }
-
-        return sum;
-    }
-
     private static int CountNeighbors(int[][] xs, int row, int col)
     {
         int sum = 0;
@@ -133,4 +103,33 @@ public static class Game
 
         return sum;
     }
+
+    /// <summary>
+    /// Neighbors are the cells surrounding the current cell ([0, 0]):
+    /// [-1][-1], [-1][0], [-1][1],
+    /// [0][-1],  [0][0],  [0][1],
+    /// [1][-1],  [1][0],  [1][1],
+    /// </summary>
+    private static int CountNeighborsOld(int[][] xs, int row, int col)
+    {
+        int sum = 0;
+
+        for (int i = row - 1; i < row + 2; i++)
+        {
+            for (int j = col - 1; j < col + 2; j++)
+            {
+                // Skip the center cell
+                if (i == row && j == col)
+                    continue;
+
+                var r = (i + xs.Length) % xs.Length; // Wrap around rows
+                var c = (j + xs[0].Length) % xs[0].Length; // Wrap around columns
+
+                sum += xs[r][c];
+            }
+        }
+
+        return sum;
+    }
+
 }

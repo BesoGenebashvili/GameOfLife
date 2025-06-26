@@ -43,24 +43,22 @@ public sealed class AnsiConsoleExtensions
 
     public static void DrawGame(
         int[][] pattern,
-        int speedInMs,
-        Pattern.Name patternName,
+        GameConfiguration configuration,
         long generation)
     {
         DrawGenerationWithCanvas(pattern);
         DrawProperties(
-            speedInMs,
-            patternName,
+            configuration,
             generation);
     }
 
     public static void DrawProperties(
-        int speed,
-        Pattern.Name patternName,
+        GameConfiguration configuration,
         long generation)
     {
-        AnsiConsole.MarkupLine($"• Speed: [green]{speed}ms[/]");
-        AnsiConsole.MarkupLine($"• Pattern: [green]{patternName}[/]");
+        AnsiConsole.MarkupLine($"• Size: [green]{configuration.GridSize}x{configuration.GridSize}[/]");
+        AnsiConsole.MarkupLine($"• Speed: [green]{configuration.SpeedInMs}ms[/]");
+        AnsiConsole.MarkupLine($"• Pattern: [green]{configuration.PatternName}[/]");
         AnsiConsole.MarkupLine($"• Generation: [green]{generation}[/]");
         AnsiConsole.MarkupLine($"[gray]• Press any key to exit[/]");
     }
