@@ -98,6 +98,7 @@ public sealed class AnsiConsoleExtensions
 
         static NotImplementedException NotImplemented() => new("Menu action is not implemented");
     }
+
     public static SettingsAction PromptSettingsAction()
     {
         var action = AnsiConsole.Prompt(
@@ -126,23 +127,10 @@ public sealed class AnsiConsoleExtensions
         static NotImplementedException NotImplemented() => new("Settings action is not implemented");
     }
 
-    public static int PromptGridSize(int defaultValue)
+    public static int PromptSpeedInMs(int currentValue, int defaultValue)
     {
-        AnsiConsole.MarkupLine($"[gray]Range: 16x16-64x64 | Default: {defaultValue}x{defaultValue}[/]");
-
-        return AnsiConsole.Prompt(
-                new TextPrompt<int>($"\nEnter grid size:")
-                        .Validate((n) => n switch
-                        {
-                            < 16 => ValidationResult.Error("[red]Too small[/]"),
-                            > 64 => ValidationResult.Error("[red]Too big[/]"),
-                            _ => ValidationResult.Success(),
-                        }));
-    }
-
-    public static int PromptSpeedInMs(int defaultValue)
-    {
-        AnsiConsole.MarkupLine($"[gray]Range: 50-1000ms | Default: {defaultValue}ms[/]");
+        AnsiConsole.MarkupLine(
+            $"[gray]Range: 50-1000ms | Current: {currentValue}ms | Default: {defaultValue}ms[/]");
 
         return AnsiConsole.Prompt(
                 new TextPrompt<int>($"\nEnter speed in ms:")
@@ -150,6 +138,21 @@ public sealed class AnsiConsoleExtensions
                         {
                             < 50 => ValidationResult.Error("[red]Too fast[/]"),
                             > 1000 => ValidationResult.Error("[red]Too slow[/]"),
+                            _ => ValidationResult.Success(),
+                        }));
+    }
+
+    public static int PromptGridSize(int currentValue, int defaultValue)
+    {
+        AnsiConsole.MarkupLine(
+            $"[gray]Range: 16x16-64x64 | Current: {currentValue}x{currentValue} | Default: {defaultValue}x{defaultValue}[/]");
+
+        return AnsiConsole.Prompt(
+                new TextPrompt<int>($"\nEnter grid size:")
+                        .Validate((n) => n switch
+                        {
+                            < 16 => ValidationResult.Error("[red]Too small[/]"),
+                            > 64 => ValidationResult.Error("[red]Too big[/]"),
                             _ => ValidationResult.Success(),
                         }));
     }

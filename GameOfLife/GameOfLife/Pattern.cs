@@ -7,7 +7,9 @@ public static class Pattern
         Random,
         Bunnies,
         Glider,
-        Blinkers
+        Blinkers,
+        Toad,
+        LWSS
     }
 
     public static int[][] Resolve(
@@ -35,6 +37,8 @@ public static class Pattern
                 Name.Bunnies => Bunnies,
                 Name.Glider => Glider,
                 Name.Blinkers => Blinkers,
+                Name.Toad => Toad,
+                Name.LWSS => LWSS,
                 _ => throw new NotSupportedException("Pattern not supported")
             };
 
@@ -71,7 +75,7 @@ public static class Pattern
         [1,0,0,0,0,0,1,0],
         [0,0,1,0,0,0,1,0],
         [0,0,1,0,0,1,0,1],
-        [0,1,0,1,0,0,0,0],
+        [0,1,0,1,0,0,0,0]
     ];
 
     private static int[][] Glider =>
@@ -87,8 +91,20 @@ public static class Pattern
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,1,1,1,0,0,0,1,1,1,0],
+        [0,1,1,1,0,0,0,1,1,1,0]
+    ];
+
+    private static int[][] Toad =>
+    [
+        [0,1,1,1],
+        [1,1,1,0]
+    ];
+
+    private static int[][] LWSS =>
+    [
+        [0,1,0,0,1],
+        [1,0,0,0,0],
+        [1,0,0,0,1],
+        [1,1,1,1,0]
     ];
 }

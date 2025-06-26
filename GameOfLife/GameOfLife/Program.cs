@@ -53,25 +53,31 @@ static async Task Run(GameConfiguration configuration)
         {
             case SettingsAction.SetGameSpeed:
 
-                var speedInMs = AnsiConsoleExtensions.PromptSpeedInMs(configuration.SpeedInMs);
+                var newSpeedInMs = AnsiConsoleExtensions.PromptSpeedInMs(
+                    configuration.SpeedInMs, 
+                    GameConfiguration.Default.SpeedInMs);
 
-                AnsiConsole.MarkupLine($"[green]Game speed set to {speedInMs}ms[/]");
+                AnsiConsole.MarkupLine($"[green]Game speed set to {newSpeedInMs}ms[/]");
                 AnsiConsole.MarkupLine("[gray]Press any key to return to the menu...[/]");
 
                 Console.ReadKey(true);
                 AnsiConsole.Clear();
-                await Run(configuration with { SpeedInMs = speedInMs });
+                await Run(configuration with { SpeedInMs = newSpeedInMs });
 
                 break;
 
             case SettingsAction.SetGridSize:
 
-                var gridSize = AnsiConsoleExtensions.PromptGridSize(configuration.GridSize);
-                AnsiConsole.MarkupLine($"[green]Game grid size set to {gridSize}X{gridSize}[/]");
+                var newGridSize = AnsiConsoleExtensions.PromptGridSize(
+                    configuration.GridSize,
+                    GameConfiguration.Default.GridSize);
+
+                AnsiConsole.MarkupLine($"[green]Game grid size set to {newGridSize}X{newGridSize}[/]");
                 AnsiConsole.MarkupLine("[gray]Press any key to return to the menu...[/]");
+
                 Console.ReadKey(true);
                 AnsiConsole.Clear();
-                await Run(configuration with { GridSize = gridSize });
+                await Run(configuration with { GridSize = newGridSize });
                 break;
 
             default:
