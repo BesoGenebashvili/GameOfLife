@@ -1,12 +1,14 @@
 ﻿using GameOfLife;
+using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using AnsiConsoleExtensions = GameOfLife.AnsiConsoleExtensions;
+// Centered text and game?
 
-ConsoleInteropService.Configure(ConsoleInteropServiceConfiguration.Default);
+var configurationRoot = GetConfigurationRoot();
+var consoleConfiguration = GetConsoleConfiguration(configurationRoot);
+ConsoleInteropService.Configure(consoleConfiguration);
 
-var defaultConfiguration = GameConfiguration.Default;
-
-await Run(defaultConfiguration);
+await Run(GameConfiguration.Default);
 
 static async Task Run(GameConfiguration configuration)
 {
@@ -85,3 +87,13 @@ static async Task Run(GameConfiguration configuration)
         }
     }
 }
+
+static IConfigurationRoot GetConfigurationRoot() =>
+    new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json")
+        .Build();
+
+static ConsoleConfiguration GetConsoleConfiguration(IConfigurationRoot configurationRoot) =>
+    configurationRoot.GetSection(ConsoleConfiguration.SectionName)
+                     .Get<ConsoleConfiguration>()
+                     ?? ConsoleConfiguration.Default;

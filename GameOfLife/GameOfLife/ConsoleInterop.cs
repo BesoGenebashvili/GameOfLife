@@ -27,20 +27,21 @@ public static unsafe partial class ConsoleInterop
 #pragma warning restore CA1401 // P/Invokes should not be visible
 }
 
-// TODO: add appsettings.json
-public sealed record ConsoleInteropServiceConfiguration(
+public sealed record ConsoleConfiguration(
     bool DisableWindowButtons,
     bool AdjustWindowSize,
     bool RemoveScrollbar,
-    bool SetEncoding)
+    bool SetEncodingToUtf8)
 {
-    public static ConsoleInteropServiceConfiguration Default =>
-        new(false, true, true, true);
+    public const string SectionName = "ConsoleConfiguration";
+
+    public static ConsoleConfiguration Default =>
+        new(false, false, false, true);
 }
 
 public static class ConsoleInteropService
 {
-    public unsafe static void Configure(ConsoleInteropServiceConfiguration configuration)
+    public unsafe static void Configure(ConsoleConfiguration configuration)
     {
         if (configuration.DisableWindowButtons)
             DisableWindowButtons();
@@ -51,8 +52,8 @@ public static class ConsoleInteropService
         if (configuration.RemoveScrollbar)
             RemoveScrollbar();
 
-        if (configuration.SetEncoding)
-            SetEncoding();
+        if (configuration.SetEncodingToUtf8)
+            SetEncodingToUtf8();
 
         unsafe static void DisableWindowButtons()
         {
@@ -81,7 +82,7 @@ public static class ConsoleInteropService
 #pragma warning restore CA1416 // Validate platform compatibility
         }
 
-        static void SetEncoding()
+        static void SetEncodingToUtf8()
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
