@@ -37,7 +37,7 @@ public sealed class AnsiConsoleExtensions
             "  - 2 or 3 neighbors -> [green]survives[/]\n\n" +
 
             "[bold]For a dead (empty) cell:[/]\n" +
-            "  - Exactly 3 neighbors -> [green]becomes alive[/] (reproduction)"
+            "  - Exactly 3 neighbors -> [green]becomes alive[/] (reproduction)\n"
         );
     }
 
@@ -71,28 +71,36 @@ public sealed class AnsiConsoleExtensions
 
     public static MenuAction PromptMenuAction()
     {
+        AnsiConsole.Write(
+            new Panel("    [green]Menu[/]    ")
+                .Border(BoxBorder.Ascii));
+
         var action = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
-                                .Title("\n    [green]MENU[/]")
+                                .Title(string.Empty)
                                 .AddChoices(Enum.GetValues<MenuAction>()
                                                 .Select(Show)
                                                 .ToArray()));
+
+        AnsiConsole.Clear();
+
+        DrawMenu();
 
         return Read(action);
 
         static string Show(MenuAction value) => value switch
         {
-            MenuAction.StartGame => "Start Game",
-            MenuAction.Settings => "Settings",
-            MenuAction.Exit => "Exit",
+            MenuAction.StartGame => "[green]Start Game[/]",
+            MenuAction.Settings => "[gray]Settings[/]",
+            MenuAction.Exit => "[red]Exit[/]",
             _ => throw NotImplemented()
         };
 
         static MenuAction Read(string value) => value switch
         {
-            "Start Game" => MenuAction.StartGame,
-            "Settings" => MenuAction.Settings,
-            "Exit" => MenuAction.Exit,
+            "[green]Start Game[/]" => MenuAction.StartGame,
+            "[gray]Settings[/]" => MenuAction.Settings,
+            "[red]Exit[/]" => MenuAction.Exit,
             _ => throw NotImplemented()
         };
 
@@ -101,13 +109,20 @@ public sealed class AnsiConsoleExtensions
 
     public static SettingsAction PromptSettingsAction()
     {
+        AnsiConsole.Write(
+            new Panel("    [green]Settings[/]    ")
+                .Border(BoxBorder.Ascii));
+
         var action = AnsiConsole.Prompt(
                         new SelectionPrompt<string>()
-                            .Title("\n    [green]SETTINGS[/]")
+                            .Title(string.Empty)
                             .AddChoices(Enum.GetValues<SettingsAction>()
                                             .Select(Show)
                                             .ToArray()));
 
+        AnsiConsole.Clear();
+        DrawMenu();
+       
         return Read(action);
 
         static string Show(SettingsAction value) => value switch

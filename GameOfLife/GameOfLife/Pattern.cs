@@ -10,7 +10,8 @@ public static class Pattern
         Blinkers,
         Toad,
         LWSS,
-        Diamond
+        Diamond,
+        BulletHeptomino
     }
 
     public static int[][] Resolve(
@@ -41,6 +42,7 @@ public static class Pattern
                 Name.Toad => Toad,
                 Name.LWSS => LWSS,
                 Name.Diamond => Diamond,
+                Name.BulletHeptomino => BulletHeptomino,
                 _ => throw new NotSupportedException("Pattern not supported")
             };
 
@@ -116,5 +118,12 @@ public static class Pattern
         [1,1,1],
         [1,0,1],
         [0,1,0],
+    ];
+
+    private static int[][] BulletHeptomino =>
+    [
+        [0,1,0],
+        [1,1,1],
+        [1,1,1],
     ];
 }
