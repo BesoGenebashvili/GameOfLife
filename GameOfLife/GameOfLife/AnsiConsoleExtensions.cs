@@ -21,7 +21,7 @@ public sealed class AnsiConsoleExtensions
     {
         AnsiConsole.Write(
             new FigletText("Game of Life")
-                .Centered()
+                .LeftJustified()
                 .Color(Color.Green));
 
         AnsiConsole.MarkupLine(

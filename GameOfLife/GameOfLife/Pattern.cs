@@ -99,7 +99,7 @@ public static class Pattern
     ];
 
     private static int[][] Toad =>
-    [
+    [ 
         [0,1,1,1],
         [1,1,1,0]
     ];

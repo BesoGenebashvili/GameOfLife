@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using AnsiConsoleExtensions = GameOfLife.AnsiConsoleExtensions;
-// Centered text and game?
 
 var configurationRoot = GetConfigurationRoot();
 var consoleConfiguration = GetConsoleConfiguration(configurationRoot);
@@ -37,10 +36,10 @@ static async Task Run(GameConfiguration configuration)
     {
         AnsiConsole.Clear();
 
-        var patternName = AnsiConsoleExtensions.PromptPattern();
-
-        // Move to settings?
-        configuration = configuration with { PatternName = patternName };
+        configuration = configuration with
+        {
+            PatternName = AnsiConsoleExtensions.PromptPattern()
+        };
 
         await Game.Play(configuration);
     }
@@ -56,7 +55,7 @@ static async Task Run(GameConfiguration configuration)
             case SettingsAction.SetGameSpeed:
 
                 var newSpeedInMs = AnsiConsoleExtensions.PromptSpeedInMs(
-                    configuration.SpeedInMs, 
+                    configuration.SpeedInMs,
                     GameConfiguration.Default.SpeedInMs);
 
                 AnsiConsole.MarkupLine($"[green]Game speed set to {newSpeedInMs}ms[/]");
