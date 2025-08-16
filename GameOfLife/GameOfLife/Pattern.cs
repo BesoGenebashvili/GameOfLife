@@ -14,7 +14,7 @@ public static class Pattern
         BulletHeptomino
     }
 
-    public static int[][] Resolve(
+    public static int[,] Resolve(
         int gridSize,
         Name pattern)
     {
@@ -26,13 +26,13 @@ public static class Pattern
             var p => ResolveCenteredPattern(p, cleanGrid),
         };
 
-        static int[][] Random(int[][] cleanGrid)
+        static int[,] Random(int[,] cleanGrid)
         {
             cleanGrid.FillWithRandomBits();
             return cleanGrid;
         }
 
-        static int[][] ResolveCenteredPattern(Name pattern, int[][] cleanGrid)
+        static int[,] ResolveCenteredPattern(Name pattern, int[,] cleanGrid)
         {
             var patternData = pattern switch
             {
@@ -50,19 +50,16 @@ public static class Pattern
         }
     }
 
-    static int[][] CenterPattern(int[][] cleanGrid, int[][] pattern)
+    static int[,] CenterPattern(int[,] cleanGrid, int[,] pattern)
     {
-        int rowOffset = (cleanGrid.Length - pattern.Length) / 2;
-        int colOffset = (cleanGrid.Length - pattern[0].Length) / 2;
+        int rowOffset = (cleanGrid.GetLength(0) - pattern.GetLength(0)) / 2;
+        int colOffset = (cleanGrid.GetLength(1) - pattern.GetLength(1)) / 2;
 
-        for (int i = 0; i < pattern.Length; i++)
+        for (int i = 0; i < pattern.GetLength(0); i++)
         {
-            var source = pattern[i];
-            var destination = cleanGrid[i + rowOffset];
-
-            for (int j = 0; j < source.Length; j++)
+            for (int j = 0; j < pattern.GetLength(1); j++)
             {
-                destination[j + colOffset] = source[j];
+                cleanGrid[i + rowOffset, j + colOffset] = pattern[i, j];
             }
         }
 
@@ -74,56 +71,63 @@ public static class Pattern
     /// This is a parent of rabbits and was found independently by Robert Wainwright and Andrew Trevorrow.
     /// https://playgameoflife.com/lexicon/bunnies
     /// </summary>
-    private static int[][] Bunnies =>
-    [
-        [1,0,0,0,0,0,1,0],
-        [0,0,1,0,0,0,1,0],
-        [0,0,1,0,0,1,0,1],
-        [0,1,0,1,0,0,0,0]
-    ];
+    private static int[,] Bunnies =>
+        new int[,]
+        {
+            {1,0,0,0,0,0,1,0},
+            {0,0,1,0,0,0,1,0},
+            {0,0,1,0,0,1,0,1},
+            {0,1,0,1,0,0,0,0}
+        };
 
-    private static int[][] Glider =>
-    [
-        [0,1,0],
-        [0,0,1],
-        [1,1,1]
-    ];
+    private static int[,] Glider =>
+        new int[,]
+        {
+            {0,1,0},
+            {0,0,1},
+            {1,1,1}
+        };
 
-    private static int[][] Blinkers =>
-    [
-        [0,1,1,1,0,0,0,1,1,1,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,1,1,1,0,0,0,1,1,1,0]
-    ];
+    private static int[,] Blinkers =>
+        new int[,]
+        {
+            {0,1,1,1,0,0,0,1,1,1,0},
+            {0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0},
+            {0,1,1,1,0,0,0,1,1,1,0}
+        };
 
-    private static int[][] Toad =>
-    [ 
-        [0,1,1,1],
-        [1,1,1,0]
-    ];
+    private static int[,] Toad =>
+    new int[,]
+        {
+            {0,1,1,1},
+            {1,1,1,0}
+        };
 
-    private static int[][] LWSS =>
-    [
-        [0,1,0,0,1],
-        [1,0,0,0,0],
-        [1,0,0,0,1],
-        [1,1,1,1,0]
-    ];
+    private static int[,] LWSS =>
+        new int[,]
+        {
+            {0,1,0,0,1},
+            {1,0,0,0,0},
+            {1,0,0,0,1},
+            {1,1,1,1,0}
+        };
 
-    private static int[][] Diamond =>
-    [
-        [0,1,0],
-        [1,1,1],
-        [1,0,1],
-        [0,1,0],
-    ];
+    private static int[,] Diamond =>
+        new int[,]
+        {
+            {0,1,0},
+            {1,1,1},
+            {1,0,1},
+            {0,1,0}
+        };
 
-    private static int[][] BulletHeptomino =>
-    [
-        [0,1,0],
-        [1,1,1],
-        [1,1,1],
-    ];
+    private static int[,] BulletHeptomino =>
+        new int[,]
+        {
+            {0,1,0},
+            {1,1,1},
+            {1,1,1}
+        };
 }

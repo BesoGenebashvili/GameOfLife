@@ -3,6 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using AnsiConsoleExtensions = GameOfLife.AnsiConsoleExtensions;
 
+// Swap Rules/Technologies in MD
+// Add Settings im MD, mention that you can change speed/size
+
 var configurationRoot = GetConfigurationRoot();
 var consoleConfiguration = GetConsoleConfiguration(configurationRoot);
 ConsoleInteropService.Configure(consoleConfiguration);

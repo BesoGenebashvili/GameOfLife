@@ -46,19 +46,22 @@ public static class Game
         }
     }
 
-    private static int[][] ResolveNextGeneration(int[][] xs)
+    private static int[,] ResolveNextGeneration(int[,] xs)
     {
-        var ys = Array.Create2D(xs.Length, xs[0].Length);
+        var width = xs.GetLength(0);
+        var height = xs.GetLength(1);
 
-        for (int i = 0; i < xs.Length; i++)
+        var ys = Array.Create2D(width, height);
+
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < xs[i].Length; j++)
+            for (int j = 0; j < height; j++)
             {
-                var state = xs[i][j];
+                var state = xs[i, j];
 
                 var neighbors = CountNeighbors(xs, i, j);
 
-                ys[i][j] = ResolveNextState(state, neighbors);
+                ys[i, j] = ResolveNextState(state, neighbors);
             }
         }
 
@@ -81,11 +84,12 @@ public static class Game
         }
     }
 
-    private static int CountNeighbors(int[][] xs, int row, int col)
+    private static int CountNeighbors(int[,] xs, int row, int col)
     {
         int sum = 0;
-        int rows = xs.Length;
-        int cols = xs[0].Length;
+
+        var width = xs.GetLength(0);
+        var height = xs.GetLength(1);
 
         for (int i = row - 1; i <= row + 1; i++)
         {
@@ -96,8 +100,8 @@ public static class Game
                     continue;
 
                 // Only count neighbors within bounds
-                if (i >= 0 && i < rows && j >= 0 && j < cols)
-                    sum += xs[i][j];
+                if (i >= 0 && i < width && j >= 0 && j < height)
+                    sum += xs[i, j];
             }
         }
 
@@ -131,5 +135,4 @@ public static class Game
 
         return sum;
     }
-
 }

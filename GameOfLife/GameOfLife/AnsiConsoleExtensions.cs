@@ -42,7 +42,7 @@ public sealed class AnsiConsoleExtensions
     }
 
     public static void DrawGame(
-        int[][] pattern,
+        int[,] pattern,
         GameConfiguration configuration,
         long generation)
     {
@@ -122,7 +122,7 @@ public sealed class AnsiConsoleExtensions
 
         AnsiConsole.Clear();
         DrawMenu();
-       
+
         return Read(action);
 
         static string Show(SettingsAction value) => value switch
@@ -172,15 +172,18 @@ public sealed class AnsiConsoleExtensions
                         }));
     }
 
-    public static void DrawGenerationWithCanvas(int[][] xs)
+    public static void DrawGenerationWithCanvas(int[,] xs)
     {
-        var canvas = new Canvas(xs.Length, xs[0].Length);
+        var width = xs.GetLength(0);
+        var height = xs.GetLength(1);
 
-        for (int i = 0; i < xs.Length; i++)
+        var canvas = new Canvas(width, height);
+
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < xs[i].Length; j++)
+            for (int j = 0; j < height; j++)
             {
-                var color = ResolveColor(xs[i][j]);
+                var color = ResolveColor(xs[i, j]);
 
                 // j is the X coordinate (column)
                 // i is the Y coordinate (row)
@@ -201,13 +204,13 @@ public sealed class AnsiConsoleExtensions
     /// <summary>
     /// Just for testing purposes
     /// </summary>
-    public static void DrawGenerationWithoutCanvas(int[][] xs)
+    public static void DrawGenerationWithoutCanvas(int[,] xs)
     {
-        for (int i = 0; i < xs.Length; i++)
+        for (int i = 0; i < xs.GetLength(0); i++)
         {
-            for (int j = 0; j < xs[i].Length; j++)
+            for (int j = 0; j < xs.GetLength(1); j++)
             {
-                Console.Write(xs[i][j] is 1 ? "0" : " ");
+                Console.Write(xs[i, j] is 1 ? "0" : " ");
             }
             Console.WriteLine();
         }
