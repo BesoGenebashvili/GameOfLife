@@ -6,6 +6,13 @@
 This project renders and animates Conway's Game of Life entirely in the terminal.  
 Built as a fun exploration of terminal UI and rendering in .NET.
 
+## Settings & Menu
+
+- **Menu**: Start Game, Settings, Exit  
+- **Settings** (configurable):  
+  - Speed (50–1000 ms, default: 200ms)
+  - Grid size (16×16 – 64×64, default: 32x32)
+
 ## Technologies
 - Spectre.Console for terminal UI  
 - Terminalizer for demo recording
